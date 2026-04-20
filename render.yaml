@@ -20,6 +20,10 @@ services:
       # For example, <your-username>-<database name>-render-postgres-backups
       - key: S3_BUCKET_NAME
         sync: false
+      # Optional prefix inside the bucket
+      # For example, main-db or staging/reporting-db
+      - key: S3_PREFIX
+        sync: false
       # Looks like "AKIAXXXXXXXXXXXXXXXX"
       - key: AWS_ACCESS_KEY_ID
         sync: false
@@ -33,4 +37,3 @@ services:
       # For example, 3.20
       - key: ALPINE_VERSION
         sync: false
-

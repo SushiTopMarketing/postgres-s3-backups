@@ -49,10 +49,28 @@ pg_dump_database() {
     pg_dump  --no-owner --no-privileges --clean --if-exists --quote-all-identifiers "$DATABASE_URL"
 }
 
+s3_prefix() {
+    local prefix="${S3_PREFIX:-}"
+
+    prefix="${prefix#/}"
+    prefix="${prefix%/}"
+
+    if [[ -n "$prefix" ]]; then
+        printf '%s/' "$prefix"
+        return
+    fi
+
+    printf ''
+}
+
+s3_object_key() {
+    printf '%s%s' "$(s3_prefix)" "$(date +%Y/%m/%d/backup-%H-%M-%S.sql.gz)"
+}
+
 upload_to_bucket() {
     # if the zipped backup file is larger than 50 GB add the --expected-size option
     # see https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html
-    s3 cp - "s3://$S3_BUCKET_NAME/$(date +%Y/%m/%d/backup-%H-%M-%S.sql.gz)"
+    s3 cp - "s3://$S3_BUCKET_NAME/$(s3_object_key)"
 }
 
 main() {
